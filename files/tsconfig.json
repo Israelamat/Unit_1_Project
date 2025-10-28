@@ -20,5 +20,5 @@
     "noFallthroughCasesInSwitch": true
   },
   
-  "include": ["src", "tailwind.config.js"]
+  "include": ["src", "tailwind.config.js", "files/interfaces/**/*", "src/interfaces", "eslint.config.js"]
 }

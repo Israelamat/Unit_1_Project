@@ -1,32 +1,12 @@
-import { PropertiesService } from "./properties.service";
-import { ProvincesService } from "./provinces.service";
+import { PropertiesService } from "./services/properties.service";
+import { ProvincesService } from "./services/provinces.service";
 import "ol/ol.css";
-import { MapService } from "./map.service";
+import { MapService } from "./services/map.service";
 import { MyGeolocation } from "./my-geolocation";
 import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
 
-
-// Interfaces de API
-interface Province {
-    id: number;
-    name: string;
-}
-
-interface Town {
-    id: number;
-    name: string;
-    latitude: number;
-    longitude: number;
-}
-
-interface ProvincesResponse {
-    provinces: Province[];
-}
-
-interface TownsResponse {
-    towns: Town[];
-}
+import {PropertyInsertTownId, Town, ProvincesResponse, TownsResponse} from "./interfaces/property";
 
 
 // Servicios
@@ -165,7 +145,7 @@ form.addEventListener("submit", (event: Event) => {
 
     const formData = new FormData(form);
 
-    const propertyData = {
+    const propertyData: PropertyInsertTownId = {
         title: (formData.get("title") as string || "").trim(),
         description: (formData.get("description") as string || "").trim(),
         price: Number(formData.get("price")),

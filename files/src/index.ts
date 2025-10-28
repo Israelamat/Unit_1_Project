@@ -1,23 +1,6 @@
-import { PropertiesService, GetPropertiesResponse } from "./properties.service";
+import { PropertiesService } from "./services/properties.service";
 
-
-// Interfaz que coincide con lo que devuelve el servicio
-interface Property {
-  id?: number;
-  mainPhoto: string;
-  title: string;
-  description: string;
-  price: number;
-  sqmeters: number;
-  numRooms: number;
-  numBaths: number;
-  townId: number;
-  // town puede estar presente si el backend lo devuelve, opcional
-  town?: {
-    name: string;
-    province: { name: string };
-  };
-}
+import { Property, GetPropertiesResponse } from "./interfaces/property";
 
 const serviceProperties = new PropertiesService();
 
@@ -59,7 +42,7 @@ const render = () => {
           e.preventDefault();
           if (!confirm("Are you sure you want to delete this property?")) return;
 
-          serviceProperties.deleteProperty(property.id!)
+          serviceProperties.deleteProperty(property.id)
             .then(() => render())
             .catch(err => console.log(err));
         });
