@@ -4,10 +4,24 @@ export interface LoginData {
 }
 
 export interface RegisterData extends LoginData {
-  name: string;
-  surname: string;
-  phone: string;
+  name: string;       
+  email: string;      
+  password: string;   
+  avatar?: string;
 }
+
+export interface RegisterResponse {
+  statusCode?: number;
+  message?: string[] | string;
+  error?: string;
+  user?: {
+    id: string;
+    name: string;
+    email: string;
+    avatar?: string;
+  };
+}
+
 
 export interface User extends Omit<RegisterData, "password"> {
   id: number;
@@ -32,4 +46,8 @@ export interface AvatarUpdateResponse {
 export interface PasswordUpdate {
   currentPassword: string;
   newPassword: string;
+}
+
+export interface RegisterStringReponse {
+  email: string;
 }

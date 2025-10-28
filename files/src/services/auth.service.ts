@@ -1,6 +1,7 @@
 import { Http } from "../http.class";
 import { API_BASE } from "../constants";
 import type { LoginData, TokenResponse } from "../interfaces/auth";
+import type { RegisterData, RegisterStringReponse } from "../interfaces/auth";
 
 export class AuthService {
   private http: Http;
@@ -19,6 +20,10 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem("token");
+  }
+
+    async register(data: RegisterData): Promise<RegisterStringReponse> {
+    return await this.http.post(`${API_BASE}/auth/register`, data);
   }
 }
 
