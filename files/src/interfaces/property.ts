@@ -1,5 +1,3 @@
-
-
 export interface PropertyInsert {
   address: string;
   title: string;
@@ -80,5 +78,12 @@ export interface TownsResponse {
 
 export interface InsertPropertyResponse {
   property: Property;
+}
+
+export interface GetFilteredPropertiesParams {
+  page?: number;
+  province?: number;
+  search?: string;
+  seller?: number;
 }
 

@@ -6,7 +6,7 @@ import { MyGeolocation } from "./my-geolocation";
 import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
 
-import {PropertyInsertTownId, Town, ProvincesResponse, TownsResponse} from "./interfaces/property";
+import { PropertyInsertTownId, Town, ProvincesResponse, TownsResponse } from "./interfaces/property";
 
 
 // Servicios
@@ -25,49 +25,47 @@ let base64Image: string = "";
 
 // ----------------- Cargar Provincias -----------------
 provincesServices.getProvinces()
-    .then((provinces: ProvincesResponse) => {
-        provinces.provinces.forEach((prov) => {
-            const option = document.createElement("option");
-            option.value = String(prov.id);
-            option.textContent = prov.name;
-            provinceSelect.appendChild(option);
-        });
-    })
-    .catch((error) => console.log(error));
+  .then((provinces: ProvincesResponse) => {
+    provinces.provinces.forEach((prov) => {
+      const option = document.createElement("option");
+      option.value = String(prov.id);
+      option.textContent = prov.name;
+      provinceSelect.appendChild(option);
+    });
+  })
+  .catch((error) => console.log(error));
 
 let allTowns: Town[] = [];
 
 // ----------------- Selección de Provincia -> Cargar Pueblos -----------------
 provinceSelect.addEventListener("change", (e: Event) => {
-    const provinceId = (e.target as HTMLSelectElement).value;
-    provincesServices.getTowns(Number(provinceId))
-        .then((towns: TownsResponse) => {
-            allTowns = towns.towns;
-            townSelect.innerHTML = '<option value="">Select a town</option>';
+  const provinceId = (e.target as HTMLSelectElement).value;
+  provincesServices.getTowns(Number(provinceId))
+    .then((towns: TownsResponse) => {
+      allTowns = towns.towns;
+      townSelect.innerHTML = '<option value="">Select a town</option>';
 
-            towns.towns.forEach((town) => {
-                const option = document.createElement("option");
-                option.value = String(town.id);
-                option.textContent = town.name;
-                townSelect.appendChild(option);
-            });
-        })
-        .catch((error) => console.log(error));
+      towns.towns.forEach((town) => {
+        const option = document.createElement("option");
+        option.value = String(town.id);
+        option.textContent = town.name;
+        townSelect.appendChild(option);
+      });
+    })
+    .catch((error) => console.log(error));
 });
 
 // ----------------- MAPA -----------------
 let mapService: MapService;
-let marker: Feature<Point>; // marker es un Feature que contiene un Point
+let marker: Feature<Point>; 
 
 document.addEventListener("DOMContentLoaded", async () => {
   const coords = await MyGeolocation.getLocation();
 
-  // Crear mapa con coordenadas correctas
   mapService = new MapService(
     {
       latitude: coords.latitude,
       longitude: coords.longitude,
-      // Si Coordinates requiere más campos, puedes pasar undefined o valores por defecto
       altitude: 0,
       accuracy: 0,
       altitudeAccuracy: 0,
@@ -106,64 +104,64 @@ townSelect.addEventListener("change", (e: Event) => {
 
 // ----------------- Imagen -> Base64 -----------------
 imageInput.addEventListener("change", () => {
-    const file = imageInput.files?.[0];
-    base64Image = "";
-    imagePreview.src = "";
-    imagePreview.classList.add("hidden");
+  const file = imageInput.files?.[0];
+  base64Image = "";
+  imagePreview.src = "";
+  imagePreview.classList.add("hidden");
 
-    if (!file) return;
+  if (!file) return;
 
-    if (!file.type.startsWith("image")) {
-        imageInput.setCustomValidity("Please select an image file.");
-        return;
-    }
+  if (!file.type.startsWith("image")) {
+    imageInput.setCustomValidity("Please select an image file.");
+    return;
+  }
 
-    if (file.size > 200 * 1024) {
-        imageInput.setCustomValidity("Image size should be less than 200kb.");
-        return;
-    }
+  if (file.size > 200 * 1024) {
+    imageInput.setCustomValidity("Image size should be less than 200kb.");
+    return;
+  }
 
-    imageInput.setCustomValidity("");
-    imagePreview.src = URL.createObjectURL(file);
-    imagePreview.classList.remove("hidden");
+  imageInput.setCustomValidity("");
+  imagePreview.src = URL.createObjectURL(file);
+  imagePreview.classList.remove("hidden");
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        base64Image = e.target?.result as string;
-    };
-    reader.readAsDataURL(file);
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    base64Image = e.target?.result as string;
+  };
+  reader.readAsDataURL(file);
 });
 
 // ----------------- Enviar Formulario -----------------
 form.addEventListener("submit", (event: Event) => {
-    event.preventDefault();
+  event.preventDefault();
 
-    if (!form.checkValidity()) {
-        form.reportValidity();
-        return;
-    }
+  if (!form.checkValidity()) {
+    form.reportValidity();
+    return;
+  }
 
-    const formData = new FormData(form);
+  const formData = new FormData(form);
 
-    const propertyData: PropertyInsertTownId = {
-        title: (formData.get("title") as string || "").trim(),
-        description: (formData.get("description") as string || "").trim(),
-        price: Number(formData.get("price")),
-        address: (formData.get("address") as string || "").trim(),
-        sqmeters: Number(formData.get("sqmeters")),
-        numRooms: Number(formData.get("numRooms")),
-        numBaths: Number(formData.get("numBaths")),
-        townId: Number(formData.get("town")),
-        mainPhoto: base64Image
-    };
+  const propertyData: PropertyInsertTownId = {
+    title: (formData.get("title") as string || "").trim(),
+    description: (formData.get("description") as string || "").trim(),
+    price: Number(formData.get("price")),
+    address: (formData.get("address") as string || "").trim(),
+    sqmeters: Number(formData.get("sqmeters")),
+    numRooms: Number(formData.get("numRooms")),
+    numBaths: Number(formData.get("numBaths")),
+    townId: Number(formData.get("town")),
+    mainPhoto: base64Image
+  };
 
-    propertiesServices.insertProperty(propertyData)
-        .then(() => {
-            form.reset();
-            base64Image = "";
-            imagePreview.src = "";
-            imagePreview.classList.add("hidden");
-            location.assign("index.html");
-        })
-        .catch((err) => console.log(err));
+  propertiesServices.insertProperty(propertyData)
+    .then(() => {
+      form.reset();
+      base64Image = "";
+      imagePreview.src = "";
+      imagePreview.classList.add("hidden");
+      location.assign("index.html");
+    })
+    .catch((err) => console.log(err));
 });

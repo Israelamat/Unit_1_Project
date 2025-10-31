@@ -11,7 +11,6 @@ window.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  // Obtener el formulario de login
   const form = document.getElementById("login-form") as HTMLFormElement | null;
   const emailInput = document.getElementById("email") as HTMLInputElement | null;
   const passwordInput = document.getElementById("password") as HTMLInputElement | null;
@@ -36,8 +35,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
     try {
       const data = await authService.login(loginData);
-      console.log("Login exitoso:", data);
-      // localStorage.setItem("token", data.accessToken);
+      console.log("Login exitoso:", data.accessToken);
+      localStorage.setItem("token", data.accessToken);
       window.location.href = "index.html";
     } catch (err) {
       console.error("Error en login:", err);
@@ -45,3 +44,10 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+
+const homeButton = document.getElementById("home-link") as HTMLAnchorElement | null;
+if (homeButton) {
+  homeButton.addEventListener("click", () => {
+    window.location.href = "index.html";
+  });
+}

@@ -31,7 +31,7 @@ export interface User extends Omit<RegisterData, "password"> {
 }
 
 export interface TokenResponse {
-  token: string;
+  accessToken: string;
 }
 
 export interface AvatarUpdate {
@@ -51,3 +51,18 @@ export interface PasswordUpdate {
 export interface RegisterStringReponse {
   email: string;
 }
+
+export interface MyUser {
+  id: number;
+  name: string;
+  email: string;
+  avatar: string;
+  lat: number;
+  lng: number;
+  me: boolean;
+}
+
+export interface UserResponse {
+  user: MyUser;
+}
+
