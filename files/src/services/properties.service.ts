@@ -1,6 +1,6 @@
 import { API_BASE } from "../constants";
 import { Http } from "../http.class";
-import { Property, PropertyInsert, InsertPropertyResponse, GetPropertiesResponse, GetFilteredPropertiesParams } from "../interfaces/property";
+import { Property, PropertyResponse, PropertyInsert, InsertPropertyResponse, GetPropertiesResponse, GetFilteredPropertiesParams } from "../interfaces/property";
 
 export class PropertiesService {
   private http: Http;
@@ -35,15 +35,13 @@ export class PropertiesService {
     return this.http.get<GetPropertiesResponse>(`${API_BASE}/properties?${query.toString()}`);
   }
 
-
-
   async deleteProperty(id: number): Promise<void> {
     return await this.http.delete(`${API_BASE}/properties/${id}`);
   }
 
-  //   async getPropertyById(id: number): Promise<Property> {
-  //     return await this.http.get(`/properties/${id}`);
-  //   }
+  async getPropertyById(id: number): Promise<PropertyResponse> {
+    return await this.http.get(`${API_BASE}/properties/${id}`);
+  }
 }
 
 export default PropertiesService;

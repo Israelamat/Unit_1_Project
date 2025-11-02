@@ -16,6 +16,7 @@ export class AuthService {
 
   checkToken(): boolean {
     const token = localStorage.getItem("token");
+    console.log(token);
     return !!(token && token !== "undefined" && token.trim().length > 0); //controla que el token no este vacio o undefined
   }
 

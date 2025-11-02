@@ -83,8 +83,9 @@ const render = (reset = false) => {
 
 
 window.addEventListener("DOMContentLoaded", () => {
+  
+  
   render(true);
-
   const logoutBtn = document.getElementById("logout-link") as HTMLButtonElement | null;
   const loginLink = document.getElementById("login-link");
   const newPropertyLink = document.getElementById("new-property-link");

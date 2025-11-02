@@ -5,21 +5,22 @@ import { MapService } from "./services/map.service";
 import { MyGeolocation } from "./my-geolocation";
 import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
+import AuthService from "./services/auth.service";
 
 import { PropertyInsertTownId, Town, ProvincesResponse, TownsResponse } from "./interfaces/property";
 
 
-// Servicios
 const propertiesServices = new PropertiesService();
 const provincesServices = new ProvincesService();
 
-// Elementos del DOM tipados
 const form = document.getElementById("property-form") as HTMLFormElement;
 const imageInput = document.getElementById("mainPhoto") as HTMLInputElement;
 const imagePreview = document.getElementById("image-preview") as HTMLImageElement;
 
 const provinceSelect = document.getElementById("province") as HTMLSelectElement;
 const townSelect = document.getElementById("town") as HTMLSelectElement;
+
+
 
 let base64Image: string = "";
 
@@ -60,6 +61,16 @@ let mapService: MapService;
 let marker: Feature<Point>; 
 
 document.addEventListener("DOMContentLoaded", async () => {
+  const authService = new AuthService();
+
+  try {
+    authService.checkToken(); 
+  } catch (err) {
+    window.location.href = "login.html";
+    console.log(err);
+    return; 
+  }
+
   const coords = await MyGeolocation.getLocation();
 
   mapService = new MapService(
@@ -165,3 +176,4 @@ form.addEventListener("submit", (event: Event) => {
     })
     .catch((err) => console.log(err));
 });
+

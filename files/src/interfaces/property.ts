@@ -63,9 +63,14 @@ export interface GetPropertiesResponse {
   more: boolean;
 }
 
+
 export interface Province {
   id: number;
   name: string;
+}
+
+export interface PropertyResponse {
+  property: Property;
 }
 
 export interface ProvincesResponse {
