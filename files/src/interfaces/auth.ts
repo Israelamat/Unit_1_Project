@@ -59,7 +59,7 @@ export interface MyUser {
   avatar: string;
   lat: number;
   lng: number;
-  me: boolean;
+  me?: boolean;
 }
 
 export interface UserResponse {

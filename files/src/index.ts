@@ -83,13 +83,13 @@ const render = (reset = false) => {
 
 
 window.addEventListener("DOMContentLoaded", () => {
-  
-  
+
+
   render(true);
   const logoutBtn = document.getElementById("logout-link") as HTMLButtonElement | null;
   const loginLink = document.getElementById("login-link");
   const newPropertyLink = document.getElementById("new-property-link");
-  const profileLink = document.getElementById("profile-link");
+  const profileLink = document.getElementById("profile-link") as HTMLAnchorElement | null;
 
   const searchForm = document.getElementById("search-form") as HTMLFormElement;
   const searchInput = document.getElementById("search-text") as HTMLInputElement;
@@ -100,27 +100,33 @@ window.addEventListener("DOMContentLoaded", () => {
   const defaultFilterText = filterInfo?.textContent || "Showing all properties";
 
 
-
-  if (authService.checkToken()) {
+  if (!authService.checkToken()) {
+    logoutBtn?.classList.add("hidden");
+    loginLink?.classList.remove("hidden");
+    newPropertyLink?.classList.add("hidden");
+    profileLink?.classList.add("hidden");
+  } else {
     logoutBtn?.classList.remove("hidden");
-    newPropertyLink?.classList.remove("hidden");
-    profileLink?.classList.remove("hidden");
     loginLink?.classList.add("hidden");
+    newPropertyLink?.classList.remove("hidden");
 
     authService.getMyUser()
       .then((user: UserResponse) => {
-        if (user.user.me) {
-          logoutBtn?.addEventListener("click", () => {
-            authService.logout();
-            window.location.href = "login.html";
-          });
+        if (profileLink) {
+          profileLink.classList.remove("hidden");
+          console.log(profileLink);
+          profileLink.href = `profile.html?id=${user.user.id}`;
         }
-      }).catch(err => console.log(err));
-  } else {
-    logoutBtn?.classList.add("hidden");
-    newPropertyLink?.classList.add("hidden");
-    profileLink?.classList.add("hidden");
-    loginLink?.classList.remove("hidden");
+
+        logoutBtn?.addEventListener("click", () => {
+          authService.logout();
+          window.location.href = "login.html";
+        });
+      })
+      .catch(err => {
+        console.error("Error obteniendo usuario:", err);
+        profileLink?.classList.add("hidden");
+      });
   }
 
   searchForm?.addEventListener("submit", (e: Event) => {

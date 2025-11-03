@@ -16,12 +16,15 @@ export class AuthService {
 
   checkToken(): boolean {
     const token = localStorage.getItem("token");
-    console.log(token);
     return !!(token && token !== "undefined" && token.trim().length > 0); //controla que el token no este vacio o undefined
   }
 
   async getMyUser(): Promise<UserResponse> {
     return await this.http.get(`${API_BASE}/users/me`);
+  }
+
+  async getUserById(id: number): Promise<UserResponse> {
+    return await this.http.get(`${API_BASE}/users/${id}`);
   }
 
   logout(): void {

@@ -48,6 +48,7 @@ export interface Property {
   numRooms: number;
   numBaths: number;
   price: number;
+  rated?: boolean;
   totalRating?: number;
   mainPhoto: string;
   createdAt: string;
