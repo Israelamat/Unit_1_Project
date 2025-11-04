@@ -114,7 +114,6 @@ window.addEventListener("DOMContentLoaded", () => {
       .then((user: UserResponse) => {
         if (profileLink) {
           profileLink.classList.remove("hidden");
-          console.log(profileLink);
           profileLink.href = `profile.html?id=${user.user.id}`;
         }
 

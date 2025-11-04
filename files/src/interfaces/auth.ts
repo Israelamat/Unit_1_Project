@@ -38,6 +38,10 @@ export interface AvatarUpdate {
   avatar: File | string; // depende si se envía como multipart o url
 }
 
+export interface AavatarResponse{
+  avatar:string;
+}
+
 export interface AvatarUpdateResponse {
   success: boolean;
   user: User;

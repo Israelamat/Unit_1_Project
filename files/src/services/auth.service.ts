@@ -1,7 +1,7 @@
 import { Http } from "../http.class";
 import { API_BASE } from "../constants";
 import type { LoginData, TokenResponse  } from "../interfaces/auth";
-import type { RegisterData, RegisterStringReponse, UserResponse} from "../interfaces/auth";
+import type { RegisterData, RegisterStringReponse, UserResponse, AavatarResponse} from "../interfaces/auth";
 
 export class AuthService {
   private http: Http;
@@ -25,6 +25,10 @@ export class AuthService {
 
   async getUserById(id: number): Promise<UserResponse> {
     return await this.http.get(`${API_BASE}/users/${id}`);
+  }
+
+  async updateAvatar(avatar: string): Promise<AavatarResponse> {
+    return await this.http.put(`${API_BASE}/users/me/avatar`, avatar);
   }
 
   logout(): void {
