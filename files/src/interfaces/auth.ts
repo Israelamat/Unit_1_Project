@@ -39,7 +39,7 @@ export interface AvatarUpdate {
 }
 
 export interface AavatarResponse{
-  avatar:string;
+  avatar: string;
 }
 
 export interface AvatarUpdateResponse {
@@ -48,8 +48,12 @@ export interface AvatarUpdateResponse {
 }
 
 export interface PasswordUpdate {
-  currentPassword: string;
-  newPassword: string;
+  password: string;
+}
+
+export interface UserUpdate {
+  name: string ;
+  email: string;
 }
 
 export interface RegisterStringReponse {

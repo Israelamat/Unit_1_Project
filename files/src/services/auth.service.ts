@@ -1,7 +1,9 @@
 import { Http } from "../http.class";
 import { API_BASE } from "../constants";
 import type { LoginData, TokenResponse  } from "../interfaces/auth";
-import type { RegisterData, RegisterStringReponse, UserResponse, AavatarResponse} from "../interfaces/auth";
+import type { RegisterData, RegisterStringReponse, UserResponse, AavatarResponse
+  ,PasswordUpdate, UserUpdate
+} from "../interfaces/auth";
 
 export class AuthService {
   private http: Http;
@@ -28,9 +30,16 @@ export class AuthService {
   }
 
   async updateAvatar(avatar: string): Promise<AavatarResponse> {
-    return await this.http.put(`${API_BASE}/users/me/avatar`, avatar);
+    return await this.http.put(`${API_BASE}/users/me/avatar`, { avatar} );
   }
 
+  async updateProfile(user: UserUpdate): Promise<void> {
+    return await this.http.put(`${API_BASE}/users/me`, user);
+  }
+
+  async changePassword(password: PasswordUpdate): Promise<void> {
+    return await this.http.put(`${API_BASE}/users/me/password`, password);
+  }
   logout(): void {
     localStorage.removeItem("token");
   }
