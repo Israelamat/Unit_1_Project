@@ -1,5 +1,6 @@
-import { UserResponse} from "./interfaces/auth";
+import { UserResponse } from "./interfaces/auth";
 import { AuthService } from "./services/auth.service";
+import Swal from 'sweetalert2';
 
 const authService = new AuthService();
 
@@ -101,7 +102,7 @@ if (!id) {
 }
 
 if (avatarUpload) {
-  avatarUpload.addEventListener("change", (e) => {
+  avatarUpload.addEventListener("change", async (e) => {
     const file = (e.target as HTMLInputElement).files?.[0];
     if (!file) return;
     try {
@@ -111,20 +112,38 @@ if (avatarUpload) {
         try {
           const response = await authService.updateAvatar(base64);
           console.log(response);
-          if(avatarImage) avatarImage.src = response.avatar;
-          alert("Avatar actualizado correctamente");
+          if (avatarImage) avatarImage.src = response.avatar;
+          await Swal.fire({
+            title: 'Avatar updated!',
+            text: 'Your Avatar has been changed successfully.',
+            icon: 'success',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#3085d6'
+          });
         }
         catch (err) {
           console.log("Este es el error");
           console.error(err);
-          alert("No se puedo actualizar el avatar")
+          await Swal.fire({
+            title: 'Error',
+            text: 'There was a problem updating your avatar.',
+            icon: 'error',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#d33'
+          });
         }
       };
       reader.readAsDataURL(file);
     }
     catch (err) {
       console.error(err);
-      alert("No se puedo procesar la imagen")
+      await Swal.fire({
+        title: 'Error',
+        text: 'There was a problem processing the image. Please try again.',
+        icon: 'error',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#d33'
+      });
     }
   })
 }
@@ -172,8 +191,13 @@ if (editProfileForm) {
         name: nameInput.value,
         email: emailInput.value,
       });
-
-      alert("Perfil actualizado correctamente");
+      await Swal.fire({
+        title: 'Profile updated!',
+        text: 'Your profile has been updated successfully.',
+        icon: 'success',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#3085d6'
+      });
 
       if (userName) userName.textContent = nameInput.value;
       if (userEmail) userEmail.textContent = emailInput.value;
@@ -182,7 +206,13 @@ if (editProfileForm) {
       changePasswordBtn?.classList.remove("hidden");
     } catch (err) {
       console.error("Error actualizando perfil:", err);
-      alert("Error al actualizar el perfil");
+      await Swal.fire({
+        title: 'Error',
+        text: 'There was a problem updating your profile.',
+        icon: 'error',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#d33'
+      });
     }
   });
 }
@@ -195,21 +225,42 @@ if (changePasswordForm) {
     const confirmPassword = (document.getElementById("confirm-new-password") as HTMLInputElement)?.value;
 
     if (newPassword !== confirmPassword) {
-      alert("Las contraseñas no coinciden");
+      await Swal.fire({
+        title: 'Error',
+        text: 'The new password and confirmation password do not match.',
+        icon: 'error',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#d33'
+      });
       return;
     }
 
     try {
       await authService.changePassword({ password: newPassword });
-      alert("Contraseña actualizada correctamente");
+
+      await Swal.fire({
+        title: 'Password updated!',
+        text: 'Your password has been changed successfully.',
+        icon: 'success',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#3085d6'
+      });
 
       changePasswordForm.classList.add("hidden");
       editProfileBtn?.classList.remove("hidden");
       changePasswordBtn?.classList.remove("hidden");
+
     } catch (err) {
-      console.error("Error cambiando contraseña:", err);
-      alert("Error al cambiar la contraseña");
+      console.error("Error changing password:", err);
+
+      await Swal.fire({
+        title: 'Error',
+        text: 'There was a problem updating your password. Please try again.',
+        icon: 'error',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#d33'
+      });
     }
+
   });
 }
-//TO DO falta cambiar avatar

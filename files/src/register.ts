@@ -1,5 +1,6 @@
 import { RegisterData } from "./interfaces/auth";
-import AuthService from "./services/auth.service";
+import {AuthService} from "./services/auth.service";
+import Swal from "sweetalert2";
 
 const authService = new AuthService();
 
@@ -78,13 +79,22 @@ form.addEventListener("submit", async (e) => {
 
   try {
     const res = await authService.register(data);
-    alert(`Usuario registrado correctamente: ${res.email}`);
+    await Swal.fire({
+        title: 'Profile registered',
+        text: `Your profile has been registered successfully with this mail: ${res.email}`,
+        icon: 'success',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#3085d6'
+      });
     window.location.href = "login.html";
-  } catch (err: unknown) {
-    if (err instanceof Error) {
-      alert(err.message);
-    } else {
-      alert("Error desconocido al registrar usuario.");
-    }
+  } catch (err) {
+    const errMessage = err instanceof Error ? err.message : "An error occurred";
+    await Swal.fire({
+        title: 'Error',
+        text: `${errMessage}. Please try again.`,
+        icon: 'error',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#d33'
+      });
   }
 });

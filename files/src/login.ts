@@ -1,5 +1,6 @@
 import { AuthService } from "./services/auth.service";
 import type { LoginData } from "./interfaces/auth";
+import Swal from "sweetalert2";
 
 const authService = new AuthService();
 
@@ -27,7 +28,14 @@ window.addEventListener("DOMContentLoaded", () => {
     const password = passwordInput.value.trim();
 
     if (!email || !password) {
-      alert("Por favor completa todos los campos.");
+      await Swal.fire({
+        title: 'Incomplete Fields',
+        text: 'Please check that all required fields are filled out before continuing.',
+        icon: 'warning',
+        confirmButtonText: 'Got it',
+        confirmButtonColor: '#f8bb86'
+      });
+
       return;
     }
 
@@ -39,8 +47,14 @@ window.addEventListener("DOMContentLoaded", () => {
       localStorage.setItem("token", data.accessToken);
       window.location.href = "index.html";
     } catch (err) {
-      console.error("Error en login:", err);
-      alert((err as Error).message || "Error al iniciar sesión.");
+      const errMessage = err instanceof Error ? err.message : "An error occurred";
+      await Swal.fire({
+        title: 'Error',
+        text: `${errMessage}. Please try again.`,
+        icon: 'error',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#d33'
+      });
     }
   });
 });

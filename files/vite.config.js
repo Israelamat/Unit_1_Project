@@ -8,8 +8,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        main: './index.html',
-        new: './new_property.html'
+        main: './index.html'
       }
     }
   }
