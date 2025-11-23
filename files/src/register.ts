@@ -1,5 +1,6 @@
 import { RegisterData } from "./interfaces/auth";
-import {AuthService} from "./services/auth.service";
+import { AuthService } from "./services/auth.service";
+import { RegisterErrorResponse } from "./interfaces/auth";
 import Swal from "sweetalert2";
 
 const authService = new AuthService();
@@ -13,8 +14,8 @@ const avatarInput = document.getElementById("avatar") as HTMLInputElement | null
 const avatarPreview = document.getElementById("avatar-preview") as HTMLImageElement | null;
 
 if (!form || !nameInput || !emailInput || !passwordInput || !passwordConfirmInput || !avatarInput || !avatarPreview) {
-  console.error("No se encontraron todos los elementos del formulario.");
-  throw new Error("Formulario incompleto en el HTML.");
+  console.error("Do not found any elements of the login form");
+  throw new Error("Uncomplete For  incompleto en el HTML.");
 }
 
 let base64Avatar = "";
@@ -22,7 +23,7 @@ let base64Avatar = "";
 // ---------- Validación de contraseñas ----------
 function validatePasswords() {
   if (passwordInput!.value !== passwordConfirmInput!.value) {
-    passwordConfirmInput!.setCustomValidity("Las contraseñas no coinciden.");
+    passwordConfirmInput!.setCustomValidity("Passwords do not match");
   } else {
     passwordConfirmInput!.setCustomValidity("");
   }
@@ -41,7 +42,7 @@ avatarInput.addEventListener("change", () => {
   if (!file) return;
 
   if (!file.type.startsWith("image")) {
-    avatarInput.setCustomValidity("Selecciona un archivo de imagen válido.");
+    avatarInput.setCustomValidity("Select a valid file");
     return;
   }
 
@@ -80,21 +81,25 @@ form.addEventListener("submit", async (e) => {
   try {
     const res = await authService.register(data);
     await Swal.fire({
-        title: 'Profile registered',
-        text: `Your profile has been registered successfully with this mail: ${res.email}`,
-        icon: 'success',
-        confirmButtonText: 'OK',
-        confirmButtonColor: '#3085d6'
-      });
+      title: 'Profile registered',
+      text: `Your profile has been registered successfully with this mail: ${res.email}`,
+      icon: 'success',
+      confirmButtonText: 'OK',
+      confirmButtonColor: '#3085d6'
+    });
+    
     window.location.href = "login.html";
   } catch (err) {
-    const errMessage = err instanceof Error ? err.message : "An error occurred";
-    await Swal.fire({
+    if (err instanceof Response) {
+      const json = (await err.json()) as RegisterErrorResponse;
+      const errorMessages = json.message.join("\n");
+      await Swal.fire({
         title: 'Error',
-        text: `${errMessage}. Please try again.`,
+        text: errorMessages,
         icon: 'error',
         confirmButtonText: 'OK',
         confirmButtonColor: '#d33'
       });
+    }
   }
 });

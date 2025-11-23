@@ -31,6 +31,8 @@ const render = (reset = false) => {
     .then((response: GetPropertiesResponse) => {
       response.properties.forEach((property: Property) => {
         const clone = templateOfCard.content.cloneNode(true) as DocumentFragment;
+        const card = clone.firstElementChild as HTMLElement; // este es el div raíz de la tarjeta
+
 
         const img = clone.querySelector(".property-image") as HTMLImageElement;
         const imgLink = img?.closest("a") as HTMLAnchorElement;
@@ -55,18 +57,23 @@ const render = (reset = false) => {
         const detailUrl = `property-detail.html?id=${property.id}`;
         imgLink.href = detailUrl;
 
-        if (!authService.checkToken()) deleteBtn?.classList.add("hidden");
+        if (!authService.checkToken() || !property.mine) {
+          deleteBtn?.classList.add("hidden");
+        } else {
+          deleteBtn?.classList.remove("hidden");
+        }
 
         deleteBtn?.addEventListener("click", (e) => {
           e.preventDefault();
           if (confirm("Are you sure you want to delete this property?")) {
             serviceProperties
               .deleteProperty(property.id)
-              .then(() => render(true))
+              .then(() => {
+                card.remove();
+              })
               .catch((err) => console.log(err));
           }
         });
-
         propertiesList.append(clone);
       });
 
@@ -80,10 +87,7 @@ const render = (reset = false) => {
     .catch((err) => console.error(err));
 };
 
-
-
 window.addEventListener("DOMContentLoaded", () => {
-
 
   render(true);
   const logoutBtn = document.getElementById("logout-link") as HTMLButtonElement | null;

@@ -1,6 +1,6 @@
 import { API_BASE } from "../constants";
 import { Http } from "../http.class";
-import { Property, PropertyResponse, PropertyInsert, InsertPropertyResponse, GetPropertiesResponse, GetFilteredPropertiesParams } from "../interfaces/property";
+import { Property, PropertyResponse, PropertyResponseWithSeller, PropertyInsert, GetPropertiesResponse, GetFilteredPropertiesParams } from "../interfaces/property";
 
 export class PropertiesService {
   private http: Http;
@@ -19,7 +19,7 @@ export class PropertiesService {
 
 
   async insertProperty(body: PropertyInsert): Promise<Property> {
-    const res = await this.http.post<InsertPropertyResponse, PropertyInsert>(`${API_BASE}/properties`, body);
+    const res = await this.http.post<PropertyResponse, PropertyInsert>(`${API_BASE}/properties`, body);
     return res.property;
   }
 
@@ -39,7 +39,7 @@ export class PropertiesService {
     return await this.http.delete(`${API_BASE}/properties/${id}`);
   }
 
-  async getPropertyById(id: number): Promise<PropertyResponse> {
+  async getPropertyById(id: number): Promise<PropertyResponseWithSeller> {
     return await this.http.get(`${API_BASE}/properties/${id}`);
   }
 }

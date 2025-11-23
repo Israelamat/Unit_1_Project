@@ -1,6 +1,6 @@
 import { AuthService } from "./services/auth.service";
 import { PropertiesService } from "./services/properties.service";
-import { Property, PropertyResponse } from "./interfaces/property";
+import { PropertyWithSeller, PropertyResponseWithSeller } from "./interfaces/property";
 import { MapService } from "./services/map.service";
 import { Feature } from "ol";
 import { Point } from "ol/geom";
@@ -51,12 +51,12 @@ if (!id) {
 }
 let mapService: MapService;
 let marker: Feature<Point>;
-let propertyLogged: Property;
+let propertyLogged: PropertyWithSeller;
 
 
 document.addEventListener("DOMContentLoaded", () => {
   propertiesService.getPropertyById(Number(id))
-    .then(async (property: PropertyResponse) => {
+    .then(async (property: PropertyResponseWithSeller) => {
       propertyLogged = property.property;
 
       const defaultCoords = {
@@ -106,23 +106,82 @@ document.addEventListener("DOMContentLoaded", () => {
         geometry.setCoordinates([propertyLon, propertyLat]);
       }
 
+      console.log(property);
       const propertyTitle = document.getElementById("property-title") as HTMLElement;
       const propertyAddress = document.getElementById("property-address") as HTMLElement;
       const propertyImage = document.getElementById("property-image") as HTMLImageElement;
       const propertyDescription = document.getElementById("property-description") as HTMLElement;
-      const propertyPrice = document.getElementById("property-price") as HTMLElement;
+      const propertyPriceDisplay = document.querySelector<HTMLParagraphElement>("p#property-price");
       const propertySqmeters = document.getElementById("property-sqmeters") as HTMLElement;
       const propertyRooms = document.getElementById("property-rooms") as HTMLElement;
       const propertyBaths = document.getElementById("property-baths") as HTMLElement;
 
-      propertyTitle.textContent = property.property.title;
-      propertyAddress.textContent = `${property.property.town?.name ?? "Unknown town"}, ${property.property.town?.province?.name ?? "Unknown province"}`;
-      propertyImage.src = property.property.mainPhoto;
-      propertyDescription.textContent = property.property.description;
-      propertyPrice.textContent = String(property.property.price);
-      propertySqmeters.textContent = String(property.property.sqmeters);
-      propertyRooms.textContent = String(property.property.numRooms);
-      propertyBaths.textContent = String(property.property.numBaths);
+      const sellerAvatar = document.getElementById("seller-photo") as HTMLImageElement | null;
+      const sellerName = document.getElementById("seller-name") as HTMLAnchorElement | null;
+      const sellerEmail = document.getElementById("seller-email") as HTMLElement;
+
+      const mortgageForm = document.getElementById("mortgage-calculator") as HTMLFormElement;
+      const propertyPriceInput = document.querySelector<HTMLInputElement>("#mortgage-calculator input[name='propertyPrice']");
+      const downPaymentInput = document.getElementById("down-payment") as HTMLInputElement;
+      const loanTermInput = document.getElementById("loan-term") as HTMLInputElement;
+      const interestRateInput = document.getElementById("interest-rate") as HTMLInputElement;
+      const mortgageResult = document.getElementById("mortgage-result") as HTMLDivElement;
+      const monthlyPaymentEl = document.getElementById("monthly-payment") as HTMLElement;
+
+
+      if (propertyLogged.seller) {
+        if (sellerAvatar) {
+          sellerAvatar.src = propertyLogged.seller.avatar ?? "default-avatar.png";
+          sellerAvatar.parentElement?.setAttribute("href", `profile.html?id=${propertyLogged.seller.id}`);
+        }
+
+        if (sellerName) {
+          sellerName.textContent = propertyLogged.seller.name;
+          sellerName.href = `profile.html?id=${propertyLogged.seller.id}`;
+        }
+
+        if (sellerEmail) {
+          sellerEmail.textContent = propertyLogged.seller.email;
+        }
+      }
+      if (propertyPriceInput) {
+        propertyPriceInput.value = String(propertyLogged.price);
+      }
+      mortgageForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const principal = propertyLogged.price - Number(downPaymentInput.value);
+        const years = Number(loanTermInput.value);
+        const annualRate = Number(interestRateInput.value) / 100;
+        const monthlyRate = annualRate / 12;
+        const totalPayments = years * 12;
+
+        if (principal <= 0 || years <= 0 || annualRate < 0) {
+          monthlyPaymentEl.textContent = "Please enter valid values.";
+          mortgageResult.classList.remove("hidden");
+          return;
+        }
+
+        // Fórmula de la hipoteca
+        const monthlyPayment = principal * (monthlyRate * Math.pow(1 + monthlyRate, totalPayments)) /
+          (Math.pow(1 + monthlyRate, totalPayments) - 1);
+
+        monthlyPaymentEl.textContent = `${monthlyPayment.toFixed(2)} €`;
+        mortgageResult.classList.remove("hidden");
+      });
+
+
+      propertyTitle.textContent = propertyLogged.title;
+      propertyAddress.textContent = `${propertyLogged.town?.name ?? "Unknown town"}, ${propertyLogged.town?.province?.name ?? "Unknown province"}`;
+      propertyImage.src = propertyLogged.mainPhoto;
+      propertyDescription.textContent = propertyLogged.description;
+      console.log(property.property.price);
+      if (propertyPriceDisplay) {
+        propertyPriceDisplay.textContent = String(propertyLogged.price);
+      }
+      propertySqmeters.textContent = String(propertyLogged.sqmeters);
+      propertyRooms.textContent = String(propertyLogged.numRooms);
+      propertyBaths.textContent = String(propertyLogged.numBaths);
 
       if (!propertyLogged.rated) {
         const ratingForm = document.getElementById("rating-form-container") as HTMLDivElement;

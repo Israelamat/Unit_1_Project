@@ -4,7 +4,7 @@ import Swal from "sweetalert2";
 
 const authService = new AuthService();
 
-window.addEventListener("DOMContentLoaded", () => {
+window.addEventListener("DOMContentLoaded", async () => {
   // Comprobar si hay token y redirigir
   if (authService.checkToken()) {
     console.log("Token encontrado, redirigiendo...");
@@ -17,7 +17,13 @@ window.addEventListener("DOMContentLoaded", () => {
   const passwordInput = document.getElementById("password") as HTMLInputElement | null;
 
   if (!form || !emailInput || !passwordInput) {
-    console.error("No se encontró algún elemento del formulario de login.");
+    await Swal.fire({
+      title: 'Error',
+      text: `There isnt't any elemenst in teh login form. Please try again.`,
+      icon: 'error',
+      confirmButtonText: 'OK',
+      confirmButtonColor: '#d33'
+    });
     return;
   }
 

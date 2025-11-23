@@ -1,3 +1,4 @@
+import { MyUser } from "./auth"; 
 export interface PropertyInsert {
   address: string;
   title: string;
@@ -51,10 +52,30 @@ export interface Property {
   rated?: boolean;
   totalRating?: number;
   mainPhoto: string;
+  mine?: boolean;
   createdAt: string;
   status: string;
   town?: Town;
   seller: number;
+}
+
+export interface PropertyWithSeller {
+  id: number;
+  address: string;
+  title: string;
+  description: string;
+  sqmeters: number;
+  numRooms: number;
+  numBaths: number;
+  price: number;
+  rated?: boolean;
+  totalRating?: number;
+  mainPhoto: string;
+  mine?: boolean;
+  createdAt: string;
+  status: string;
+  town?: Town;
+  seller: MyUser;
 }
 
 export interface GetPropertiesResponse {
@@ -82,8 +103,8 @@ export interface TownsResponse {
   towns: Town[];
 }
 
-export interface InsertPropertyResponse {
-  property: Property;
+export interface PropertyResponseWithSeller {
+  property: PropertyWithSeller;
 }
 
 export interface GetFilteredPropertiesParams {

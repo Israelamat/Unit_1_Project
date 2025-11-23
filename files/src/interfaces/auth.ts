@@ -25,7 +25,7 @@ export interface RegisterResponse {
 
 export interface User extends Omit<RegisterData, "password"> {
   id: number;
-  avatar?: string; // opcional si no siempre viene
+  avatar?: string; 
   createdAt: string;
   updatedAt: string;
 }
@@ -35,7 +35,7 @@ export interface TokenResponse {
 }
 
 export interface AvatarUpdate {
-  avatar: File | string; // depende si se envía como multipart o url
+  avatar: File | string;
 }
 
 export interface AavatarResponse{
@@ -73,4 +73,11 @@ export interface MyUser {
 export interface UserResponse {
   user: MyUser;
 }
+
+export interface RegisterErrorResponse {
+  statusCode: number;
+  message: string[]; 
+  error: string;
+}
+
 
