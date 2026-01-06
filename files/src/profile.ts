@@ -60,7 +60,6 @@ const cancelEditProfileBtn = document.getElementById("cancel-edit-profile") as H
 const cancelChangePasswordBtn = document.getElementById("cancel-change-password") as HTMLButtonElement | null;
 
 const fillUserData = (user: UserResponse["user"]) => {
-
   if (userName && userEmail && avatarImage) {
     userName.textContent = user.name;
     userEmail.textContent = user.email;
@@ -69,25 +68,29 @@ const fillUserData = (user: UserResponse["user"]) => {
 
   if (user.me) {
     editProfileForm?.classList.remove("hidden");
+    editButtons?.classList.remove("hidden");
     if (avatarUpload) avatarUpload.disabled = false;
+    if (nameInput) nameInput.value = user.name;
+    if (emailInput) emailInput.value = user.email;
   } else {
     editProfileForm?.classList.add("hidden");
+    editButtons?.classList.add("hidden");
     if (avatarUpload) avatarUpload.disabled = true;
   }
-}
+};
 
 if (!id) {
   authService.getMyUser()
     .then((user: UserResponse) => {
       fillUserData(user.user);
-      if (nameInput && emailInput) {
-        nameInput.value = user.user.name;
-        emailInput.value = user.user.email;
-      }
-      editProfileForm?.classList.remove("hidden");
     })
     .catch(err => {
-      console.error(err);
+      console.error("Usuario no autorizado:", err);
+      editProfileForm?.classList.add("hidden");
+      editButtons?.classList.add("hidden");
+      if (avatarUpload) avatarUpload.disabled = true;
+      if (nameInput) nameInput.value = "";
+      if (emailInput) emailInput.value = "";
     });
 } else {
   authService.getUserById(Number(id))
@@ -98,8 +101,15 @@ if (!id) {
     })
     .catch(err => {
       console.error(err);
+      editProfileForm?.classList.add("hidden");
+      editButtons?.classList.add("hidden");
+      avatarOverlay?.classList.add("hidden");
+      if (avatarUpload) avatarUpload.disabled = true;
+      if (nameInput) nameInput.value = "";
+      if (emailInput) emailInput.value = "";
     });
 }
+
 
 if (avatarUpload) {
   avatarUpload.addEventListener("change", async (e) => {

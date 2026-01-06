@@ -33,6 +33,7 @@
     loginLink?.classList.remove("hidden");
     newPropertyLink?.classList.add("hidden");
     profileLink?.classList.add("hidden");
+    
   } else {
     logoutBtn?.classList.remove("hidden");
     loginLink?.classList.add("hidden");
@@ -206,6 +207,6 @@
         imagePreview.classList.add("hidden");
         location.assign("index.html");
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err));  
   });
 
